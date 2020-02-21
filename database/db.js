@@ -5,6 +5,13 @@ const sequelize = new Sequlize('nodejs_tasks', 'root', '', {
   dialect: 'mysql',
   operatorAliases: false,
 
+  timezone: '+07:00',
+
+  dialectOptions: {
+    dateStrings: true,
+    typeCast: true,
+  },
+
   pool: {
     max: 5,
     min: 0,

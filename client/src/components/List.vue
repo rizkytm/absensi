@@ -1,8 +1,16 @@
 <template>
   <div class="hello">
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+      <h5 class="my-0 mr-md-auto font-weight-normal">Introduction to Total Success</h5>
+      <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="#">Features</a>
+        <a class="p-2 text-dark" href="#">Enterprise</a>
+      </nav>
+      <a class="btn btn-outline-primary" href="#">Login</a>
+    </div>
     <div id="todo-list-example" class="container">
       <div class="row">
-        <div class="col-md-6 mx-auto">
+        <div class="col-md-4 order-md-2 mb-4">
           <h1 class="text-center">TODO List App</h1>
           <form v-on:submit.prevent="addNewTask">
             <label for="tasknameinput">Task Name</label>
@@ -17,7 +25,7 @@
 
           <table class="table">
             <tr v-for="(todo) in todos" v-bind:key="todo.id" v-bind:title="todo.task_name">
-              <td class="text-left">{{todo.task_name}}</td>
+              <td class="text-left" v-on:click="setActiveTask(todo.task_name)">{{todo.task_name}}</td>
               <td class="text-right">
                 <button class="btn btn-info" v-on:click="editTask(todo.task_name, todo.id)">Edit</button>
                 <button class="btn btn-danger" v-on:click="deleteTask(todo.id)">Delete</button>
@@ -25,6 +33,47 @@
             </tr>
           </table>
         </div>
+
+      <div class="col-md-8 order-md-1">
+      <h4 class="mb-3">Billing address</h4>
+      <form class="needs-validation" novalidate>
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">First</th>
+                  <th scope="col">Last</th>
+                  <th scope="col">Handle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>@fat</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Larry</td>
+                  <td>the Bird</td>
+                  <td>@twitter</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+      </div>
+
       </div>
     </div>
   </div>
@@ -37,6 +86,7 @@ import io from 'socket.io-client'
 export default {
   data () {
     return {
+      activeTask: '',
       todos: [],
       id: '',
       taskName: '',
@@ -49,6 +99,9 @@ export default {
     this.joinServer()
   },
   methods: {
+    setActiveTask (task) {
+      this.activeTask = task
+    },
     joinServer: function () {
       this.socket.on('loggedIn', () => {
         console.log('Saya Hadir')
@@ -57,7 +110,8 @@ export default {
     },
     listen () {
       this.socket.on('task', task => {
-        this.todos = task
+        this.getTasks()
+        // this.todos = task
       })
     },
     getTasks () {
@@ -65,6 +119,8 @@ export default {
         result => {
           console.log(result.data)
           this.todos = result.data
+          // this.activeTask = this.todos[-1]
+          this.setActiveTask(this.todos[this.todos.length - 1].task_name)
         },
         error => {
           console.error(error)

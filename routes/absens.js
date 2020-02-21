@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const Task = require('../model/Task');
+const Absen = require('../model/Absen');
 
 const ioClient = require('socket.io-client');
 const socketClient = ioClient('http://localhost:3000');
 
 // Get All Tasks
-router.get('/tasks', (req, res) => {
-  Task.findAll({
+router.get('/absens', (req, res) => {
+    Absen.findAll({
     where: {
       status: "Hadir"
     },
@@ -15,14 +15,8 @@ router.get('/tasks', (req, res) => {
       ['presence_time', 'ASC']
     ]
   })
-    .then(tasks => {
-
-      // var task = tasks.filter(tas => {
-      //   return tas.status == "Hadir";
-      // })
-      // console.log(task);
-      // console.log(tasks);
-      res.json(tasks);
+    .then(absens => {
+      res.json(absens);
     })
     .catch(err => {
       res.send('error: ' + err);
@@ -30,17 +24,17 @@ router.get('/tasks', (req, res) => {
 });
 
 // Add Task
-router.post('/task', (req, res) => {
-  if (!req.body.task_name) {
+router.post('/absen', (req, res) => {
+  if (!req.body.no_konfirmasi) {
     res.status(400);
     res.json({
       error: 'Bad Data'
     });
   } else {
-    Task.create(req.body)
+    Absen.create(req.body)
       .then(() => {
-        socketClient.emit('task', req.body);
-        res.send('Task Added');
+        socketClient.emit('absen', req.body);
+        res.send('Absen Added');
       })
       .catch(err => {
         res.send('Error: ' + err);
@@ -49,14 +43,14 @@ router.post('/task', (req, res) => {
 });
 
 // Delete Task
-router.delete('/task/:id', (req, res) => {
-  Task.destroy({
+router.delete('/absen/:id', (req, res) => {
+    Absen.destroy({
     where: {
       id: req.params.id
     }
   })
     .then(() => {
-      res.send('Task Deleted!');
+      res.send('Absen Deleted!');
     })
     .catch(err => {
       res.send('error: ' + err);
@@ -64,20 +58,25 @@ router.delete('/task/:id', (req, res) => {
 });
 
 // Update Task
-router.put('/task/:id', (req, res) => {
+router.put('/absen/:no_konfirmasi', (req, res) => {
   if (!req.body.status) {
     res.status(400);
     res.json({
       error: 'Bad Data'
     });
   } else {
-    Task.update({ status: req.body.status, presence_time : Date().toLocaleString({timezone: 'Asia/Bangkok'}) },
+    let dateTime = new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"})
+    console.log(dateTime);
+    dateTime = new Date(dateTime)
+    console.log(dateTime);
+    console.log(dateTime.toLocaleString());
+    Absen.update({ status: req.body.status, presence_time : dateTime.toLocaleString() },
       // { presence_time : Date().toLocaleString() },
-      { where: { id: req.params.id } },
+      { where: { no_konfirmasi: req.params.no_konfirmasi } },
     )
       .then(() => {
-        socketClient.emit('task', req.body.task_name);
-        res.send('Task Updated!');
+        socketClient.emit('absen', req.body.task_name);
+        res.send('Absen Updated!');
       })
       .error(err => res.send(err));
     
