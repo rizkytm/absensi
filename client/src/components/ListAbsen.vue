@@ -10,8 +10,8 @@
         </div> -->
         <div class="container">
             <div class="row">
-                <div class="col-md-8">
-                    <h3>List Kehadiran</h3>
+                <div class="col-md-12">
+                    <h3>List Semua Kehadiran</h3>
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -22,6 +22,7 @@
                             <th scope="col">Program</th>
                             <th scope="col">Status</th>
                             <th scope="col">Presence Time</th>
+                            <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -33,22 +34,15 @@
                             <td>{{absen.program}}</td>
                             <td>{{absen.status}}</td>
                             <td>{{absen.presence_time}}</td>
+                            <td v-if="absen.status == 'Belum Hadir'">
+                                <button class="btn btn-primary" v-on:click="updateAbsen(absen)">Belum Hadir</button>
+                            </td>
+                            <td v-else>
+                                <button class="btn btn-success" v-on:click="updateAbsen(absen)">Hadir</button>
+                            </td>
                             </tr>
                         </tbody>
                         </table>
-                </div>
-                <div class="col-6 col-md-4">
-                    <h3>Data Peserta</h3>
-                    <div class="card">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Nama : {{activeAbsen.nama}}</li>
-                        <li class="list-group-item">No Konfirmasi : {{activeAbsen.no_konfirmasi}}</li>
-                        <li class="list-group-item">Jenis Tiket : {{activeAbsen.jenis_tiket}}</li>
-                        <li class="list-group-item">Program : {{activeAbsen.program}}</li>
-                        <li class="list-group-item">Status : {{activeAbsen.status}} </li>
-                        <li class="list-group-item">Presence Time : {{activeAbsen.presence_time}} </li>
-                    </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -91,7 +85,7 @@ export default {
       })
     },
     getAbsens () {
-      axios.get('/api/absens').then(
+      axios.get('/api/absensi').then(
         result => {
           console.log(result.data)
           this.absens = result.data
@@ -119,9 +113,9 @@ export default {
       this.taskName = title
       this.isEdit = true
     },
-    updateTask () {
+    updateAbsen (absen) {
       axios
-        .put(`/api/absen/${this.id}`, { absen: this.taskName })
+        .put(`/api/absen/${absen.no_konfirmasi}`, { status: 'Hadir' })
         .then(res => {
           this.taskName = ''
           this.isEdit = false

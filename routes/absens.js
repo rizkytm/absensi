@@ -23,6 +23,21 @@ router.get('/absens', (req, res) => {
     });
 });
 
+// Get All Tasks
+router.get('/absensi', (req, res) => {
+  Absen.findAll({
+  order: [
+    ['nama', 'ASC']
+  ]
+})
+  .then(absens => {
+    res.json(absens);
+  })
+  .catch(err => {
+    res.send('error: ' + err);
+  });
+});
+
 // Add Task
 router.post('/absen', (req, res) => {
   if (!req.body.no_konfirmasi) {
