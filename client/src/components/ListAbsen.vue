@@ -11,7 +11,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h3>List Semua Kehadiran</h3>
+                    <h3>List Semua Kehadiran ({{this.count}}/{{this.absens.length}})</h3>
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -61,14 +61,22 @@ export default {
       id: '',
       taskName: '',
       isEdit: false,
-      socket: io('http://localhost:3000')
+      socket: io('http://localhost:3000'),
+      count: ''
     }
   },
   mounted () {
     this.getAbsens()
     this.joinServer()
+    this.countHadir()
   },
   methods: {
+    countHadir () {
+      let hadir = this.absens.filter(absen => {
+        return absen.status === 'Hadir'
+      })
+      this.count = hadir.length
+    },
     setActiveAbsen (absen) {
       this.activeAbsen = absen
     },
@@ -91,6 +99,7 @@ export default {
           this.absens = result.data
           // this.activeTask = this.todos[-1]
           this.setActiveAbsen(this.absens[this.absens.length - 1])
+          this.countHadir()
         },
         error => {
           console.error(error)

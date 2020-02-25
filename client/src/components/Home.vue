@@ -25,7 +25,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-on:click="setActiveAbsen(absen)" v-for="(absen, index) in absens" v-bind:key="absen.id" v-bind:title="absen.nama">
+                            <tr style="cursor: pointer;" v-on:click="setActiveAbsen(absen)" v-for="(absen, index) in absens" v-bind:key="absen.id" v-bind:title="absen.nama">
                             <th scope="row">{{index+1}}</th>
                             <td>{{absen.nama}}</td>
                             <td>{{absen.no_konfirmasi}}</td>
